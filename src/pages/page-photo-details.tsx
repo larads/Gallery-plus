@@ -8,38 +8,32 @@ import Button from "../components/button";
 import AlbumsListSelectable from "../context/albums/components/albums-list-selectable";
 import { useParams } from "react-router";
 import useAlbums from "../context/albums/hooks/use-albums";
+import usePhoto from "../context/photos/hooks/use-photo";
 
 export default function PagePhotoDetails() {
+  const { id } = useParams();
+  const { photo, isLoadingPhoto, previousPhotoId, nextPhotoId } = usePhoto(id);
   const { albums, isLoadingAlbums } = useAlbums();
-
-  const { id } = useParams<{ id: string }>();
-  const isLoadingPhoto = false;
-  const photo = {
-    id: id || "123",
-    title: "Olá mundo!",
-    imageId: "portrait-tower.png",
-    albums: [
-      { id: "3421", title: "Album 1" },
-      { id: "123", title: "Album 2" },
-      { id: "456", title: "Album 3" },
-    ],
-  } as Photo;
+  
+  if (!isLoadingPhoto && !photo) {
+    return <div>Foto não encontrada</div>;
+  }
 
   return (
     <Container>
       <header className="flex items-center justify-between gap-8 mb-8">
         {!isLoadingPhoto ? (
           <Text as="h2" variant="heading-large">
-            {photo.title}
+            {photo?.title}
           </Text>
         ) : (
           <Skeleton className="w-48 h-8" />
         )}
 
-        <PhotosNavigator 
-          previousPhotoId={undefined}
-          nextPhotoId={undefined}
+        <PhotosNavigator
           loading={isLoadingPhoto}
+          previousPhotoId={previousPhotoId}
+          nextPhotoId={nextPhotoId}
         />
       </header>
 
@@ -47,8 +41,8 @@ export default function PagePhotoDetails() {
         <div className="space-y-3">
           {!isLoadingPhoto ? (
             <ImagePreview
-              src={`/images/${photo?.imageId}`}
-              title={photo.title}
+              src={`${import.meta.env.VITE_IMAGES_URL}/${photo?.imageId}`}              
+              title={photo?.title}
               imageClassName="h-[21rem]"
             />
           ) : (
@@ -67,7 +61,7 @@ export default function PagePhotoDetails() {
             Álbuns
           </Text>
           <AlbumsListSelectable
-            photo={photo}
+            photo={photo as Photo}
             albums={albums}
             loading={isLoadingAlbums}
           />

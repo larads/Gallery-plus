@@ -7,8 +7,11 @@ import ImagePreview from "../components/image-preview";
 import Button from "../components/button";
 import AlbumsListSelectable from "../context/albums/components/albums-list-selectable";
 import { useParams } from "react-router";
+import useAlbums from "../context/albums/hooks/use-albums";
 
 export default function PagePhotoDetails() {
+  const { albums, isLoadingAlbums } = useAlbums();
+
   const { id } = useParams<{ id: string }>();
   const isLoadingPhoto = false;
   const photo = {
@@ -65,12 +68,8 @@ export default function PagePhotoDetails() {
           </Text>
           <AlbumsListSelectable
             photo={photo}
-            albums={[
-              { id: "3421", title: "Album 1" },
-              { id: "123", title: "Album 2" },
-              { id: "456", title: "Album 3" },
-            ]}
-            loading={isLoadingPhoto}
+            albums={albums}
+            loading={isLoadingAlbums}
           />
         </div>
       </div>

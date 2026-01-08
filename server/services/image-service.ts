@@ -16,6 +16,10 @@ export class ImageService {
 		}
 	}
 
+	async initialize(): Promise<void> {
+		await this.ensureImagesDirExists();
+	}
+
 	async uploadImage(imageBuffer: Buffer, filename: string): Promise<string> {
 		// Validate image type
 		const allowedExtensions = [".jpg", ".jpeg", ".png"];

@@ -28,17 +28,19 @@ const start = async () => {
 		},
 	});
 
-	// Serve static images
+	// Initialize services first to create directories
+	const databaseService = new DatabaseService();
+	await databaseService.initialize();
+
+	const imageService = new ImageService();
+	await imageService.initialize(); // Ensure images directory exists
+
+	// Serve static images (must exist before registering)
 	await fastify.register(staticFiles, {
 		root: resolve(process.cwd(), "data", "images"),
 		prefix: "/images/",
 	});
 
-	// Initialize services
-	const databaseService = new DatabaseService();
-	await databaseService.initialize();
-
-	const imageService = new ImageService();
 	const photosService = new PhotosService(databaseService, imageService);
 	const albumsService = new AlbumsService(databaseService);
 
